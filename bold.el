@@ -6,8 +6,7 @@
 (defgroup bold nil
   "A wrapper for multiple IDE backends.")
 
-(defvar bold-binding-mode-map nil
-  "Keymap for `bold-binding-mode'.")
+(defvar bold-mode-map (make-sparse-keymap))
 
 (defcustom bold-minor-mode-alist
   '((tide-mode
@@ -35,23 +34,6 @@
      :priority 10))
   "Alist of minor modes supported by this backend."
   :group 'bold)
-
-(defcustom bold-prefix-key "C-c"
-  "Prefix key for `bold-binding-mode-map'.")
-
-(defcustom bold-binding-alist
-  '(("f" bold-fix-at-point)
-    ("r" bold-find-references-at-point)
-    ("q" bold-format-region))
-  "Alist of bindings for `bold-bindings-mode-map'."
-  :set
-  (lambda (sym value)
-    (set sym value)
-    (setq bold-binding-mode-map
-          (let ((m (make-sparse-keymap)))
-            (cl-loop for (k cmd) in value
-                     do (define-key m (kbd (concat bold-prefix-key " " k)) cmd))
-            m))))
 
 ;;;; Common utilities
 (defun bold--active-minor-modes ()
@@ -137,9 +119,9 @@
   #'xref-pop-marker-stack)
 
 ;;;; Minor mode
-(define-minor-mode bold-binding-mode
-  "Minor mode activating the non-standard keymap for bold."
-  nil "Bold" 'bold-binding-mode-map)
+(define-minor-mode bold-meta-minor-mode
+  "Minor mode where commands in bold.el are enabled."
+  nil " Bold" 'bold-mode-map)
 
 (provide 'bold)
 ;;; bold.el ends here
