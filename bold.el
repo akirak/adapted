@@ -10,6 +10,7 @@
 
 (defcustom bold-minor-mode-alist
   '((tide-mode
+     :package tide
      :major-modes (typescript-mode js-mode tsx-mode jsx-mode web-mode)
      :documentation-url "https://github.com/ananthakumaran/tide"
      :server-info tide-list-servers
@@ -122,6 +123,23 @@
 (define-minor-mode bold-meta-minor-mode
   "Minor mode where commands in bold.el are enabled."
   nil " Bold" 'bold-mode-map)
+
+(defun bold-meta-minor-mode-conditionally ()
+  (interactive)
+  (let ((enabled (-any (lambda (mode)
+                         (and (boundp mode) (symbol-value mode)))
+                       (-map #'car bold-minor-mode-alist))))
+    (bold-meta-minor-mode enabled)))
+
+;;;; Enabling
+(defun bold-setup-hooks ()
+  (cl-loop for (mode plist) in bold-minor-mode-alist
+           do (let ((package (plist-get plist :package))
+                    (hook (intern (format "%s-hook" mode))))
+                (if package
+                    (eval-after-load package
+                      (add-hook hook #'bold-meta-minor-mode-conditionally))
+                  (add-hook hook #'bold-meta-minor-mode-conditionally)))))
 
 (provide 'bold)
 ;;; bold.el ends here
