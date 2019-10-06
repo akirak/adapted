@@ -36,6 +36,12 @@
   "Alist of minor modes supported by this backend."
   :group 'bold)
 
+(defcustom bold-documentation-at-point-fallback
+  #'describe-symbol
+  "Fallback command/function from `bold-documentation-at-point'."
+  :group 'bold
+  :type 'function)
+
 ;;;; Common utilities
 (defun bold--active-minor-modes ()
   (->> bold-minor-mode-alist
@@ -79,7 +85,8 @@
   "Find references to the symbol at point.")
 ;;;###autoload
 (bold--def-minor-command bold-documentation-at-point :documentation-at-point
-  "Display documentation on the symbol at point.")
+  "Display documentation on the symbol at point."
+  'bold-documentation-at-point-fallback)
 ;;;###autoload
 (bold--def-minor-command bold-server-info :server-info
   "Display the server information.")
