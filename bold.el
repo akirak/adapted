@@ -120,16 +120,16 @@
   #'xref-pop-marker-stack)
 
 ;;;; Minor mode
-(define-minor-mode bold-meta-minor-mode
+(define-minor-mode bold-mode
   "Minor mode where commands in bold.el are enabled."
   nil " Bold" 'bold-mode-map)
 
-(defun bold-meta-minor-mode-conditionally ()
+(defun bold-mode-conditionally ()
   (interactive)
   (let ((enabled (-any (lambda (mode)
                          (and (boundp mode) (symbol-value mode)))
                        (-map #'car bold-minor-mode-alist))))
-    (bold-meta-minor-mode enabled)))
+    (bold-mode enabled)))
 
 ;;;; Enabling
 (defun bold-setup-hooks ()
@@ -138,8 +138,8 @@
                     (hook (intern (format "%s-hook" mode))))
                 (if package
                     (eval-after-load package
-                      (add-hook hook #'bold-meta-minor-mode-conditionally))
-                  (add-hook hook #'bold-meta-minor-mode-conditionally)))))
+                      (add-hook hook #'bold-mode-conditionally))
+                  (add-hook hook #'bold-mode-conditionally)))))
 
 (provide 'bold)
 ;;; bold.el ends here
