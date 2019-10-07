@@ -78,54 +78,53 @@
 
 ;;;; Commands
 
-;;;###autoload
 (bold--def-minor-command bold-fix-at-point :fix-at-point
   "Apply fix for the error at point.")
-;;;###autoload
+
 (bold--def-minor-command bold-format-region :format-region
   "Format the region.")
-;;;###autoload
+
 (bold--def-minor-command bold-find-references-at-point :find-references-at-point
   "Find references to the symbol at point.")
-;;;###autoload
+
 (bold--def-minor-command bold-documentation-at-point :documentation-at-point
   "Display documentation on the symbol at point."
   'bold-documentation-at-point-fallback)
-;;;###autoload
+
 (bold--def-minor-command bold-server-info :server-info
   "Display the server information.")
-;;;###autoload
+
 (bold--def-minor-command bold-server-restart :server-restart
   "Restart the server.")
-;;;###autoload
+
 (bold--def-minor-command bold-list-file-errors :list-file-errors
   "Display a list of all errors in the file.")
-;;;###autoload
+
 (bold--def-minor-command bold-list-project-errors :list-project-errors
   "Display a list of all errors in the project.")
-;;;###autoload
+
 (bold--def-minor-command bold-error-at-point :error-at-point
   "Display details on the error at point.")
-;;;###autoload
+
 (bold--def-minor-command bold-rename-file :rename-file
   "Rename the current file.")
-;;;###autoload
+
 (bold--def-minor-command bold-rename-symbol :rename-symbol
   "Rename the symbol at point.")
-;;;###autoload
+
 (bold--def-minor-command bold-refactor :refactor
   "Refactor code at point or the region.")
-;;;###autoload
+
 (bold--def-minor-command bold-organize-imports :organize-imports
   "Organize imports in the file.")
-;;;###autoload
+
 (bold--def-minor-command bold-insert-block-comment :insert-block-comment
   "Insert a block comment for the current language.")
-;;;###autoload
+
 (bold--def-minor-command bold-jump-to-definition :jump-to-definition
   "Jump to the definition of the symbol at point."
   #'xref-find-definitions)
-;;;###autoload
+
 (bold--def-minor-command bold-jump-back :jump-back
   "Jump back to the previous location of `bold-jump-to-definition'."
   #'xref-pop-marker-stack)
@@ -135,22 +134,13 @@
   "Minor mode where commands in bold.el are enabled."
   nil " Bold" 'bold-mode-map)
 
+;;;###autoload
 (defun bold-mode-conditionally ()
   (interactive)
   (let ((enabled (-any (lambda (mode)
                          (and (boundp mode) (symbol-value mode)))
                        (-map #'car bold-minor-mode-alist))))
     (bold-mode enabled)))
-
-;;;; Enabling
-(defun bold-setup-hooks ()
-  (cl-loop for (mode plist) in bold-minor-mode-alist
-           do (let ((package (plist-get plist :package))
-                    (hook (intern (format "%s-hook" mode))))
-                (if package
-                    (eval-after-load package
-                      (add-hook hook #'bold-mode-conditionally))
-                  (add-hook hook #'bold-mode-conditionally)))))
 
 (provide 'bold)
 ;;; bold.el ends here
