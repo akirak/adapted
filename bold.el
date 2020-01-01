@@ -1,10 +1,10 @@
-;;; bold.el --- A wrapper for multiple IDE backends -*- lexical-binding: t -*-
+;;; bold.el --- A wrapper for various utilities for programming -*- lexical-binding: t -*-
 
 (require 'cl-lib)
 (require 'dash)
 
 (defgroup bold nil
-  "A wrapper for multiple IDE backends.")
+  "A wrapper for various utilities for programming.")
 
 (defvar bold-mode-map (make-sparse-keymap))
 
