@@ -78,6 +78,18 @@
 
 ;;;; Commands
 
+;;;###autoload
+(defun bold-error-list ()
+  "Display a list of errors in the current buffer."
+  (interactive)
+  (cond
+   ;; TODO: Support flymake
+   ((or (bound-and-true-p flycheck-mode)
+        (derived-mode-p 'prog-mode))
+    (flycheck-list-errors))
+   ((derived-mode-p 'org-mode)
+    (org-lint))))
+
 (bold--def-minor-command bold-fix-at-point :fix-at-point
   "Apply fix for the error at point.")
 
