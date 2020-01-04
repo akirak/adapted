@@ -86,6 +86,9 @@
    ;; TODO: Support flymake
    ((or (bound-and-true-p flycheck-mode)
         (derived-mode-p 'prog-mode))
+    (when (and (bound-and-true-p flycheck-mode)
+               (yes-or-no-p "flycheck-mode is disabled. Turn it on now?"))
+      (flycheck-mode))
     (flycheck-list-errors))
    ((derived-mode-p 'org-mode)
     (org-lint))))
