@@ -1,4 +1,4 @@
-;;; bold-avy.el --- Avy interface -*- lexical-binding: t -*-
+;;; adapted-avy.el --- Avy interface -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2020 Akira Komamura
 
@@ -6,7 +6,7 @@
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "25.1") (avy "0.5"))
 ;; Keywords: 
-;; URL: https://github.com/akirak/bold.el
+;; URL: https://github.com/akirak/adapted
 
 ;; This file is not part of GNU Emacs.
 
@@ -31,24 +31,24 @@
 
 ;;; Code:
 
-(require 'bold)
+(require 'adapted)
 (require 'avy)
 (require 'general)
 
-(defcustom bold-avy-prefix-key nil
-  "Prefix key for bold-avy commands."
+(defcustom adapted-avy-prefix-key nil
+  "Prefix key for adapted-avy commands."
   :type 'string
   :set (lambda (sym value)
-         (when bold-avy-prefix-key
-           (general-unbind bold-avy-prefix-key))
+         (when adapted-avy-prefix-key
+           (general-unbind adapted-avy-prefix-key))
          (set-default sym value)
          (when value
            (general-define-key :prefix value
                                "j" #'avy-goto-char-timer
                                "s" '(nil :wk "symbol")
-                               "sy" '(bold-avy-insert-symbol :wk "insert")))))
+                               "sy" '(adapted-avy-insert-symbol :wk "insert")))))
 
-(defun bold-avy--symbol (op res)
+(defun adapted-avy--symbol (op res)
   (let ((start (caar res))
         (window (cdr res)))
     (with-current-buffer (window-buffer window)
@@ -66,14 +66,14 @@
             (buffer-substring-no-properties begin end)))))))
 
 ;;;###autoload
-(defun bold-avy-insert-symbol ()
+(defun adapted-avy-insert-symbol ()
   "Kill-ring-save a symbol and insert it into the current point."
   (interactive)
   (let ((avy-all-windows t)
-        (avy-pre-action (-partial #'bold-avy--symbol #'kill-ring-save)))
+        (avy-pre-action (-partial #'adapted-avy--symbol #'kill-ring-save)))
     (save-excursion
       (avy-goto-char-timer))
     (yank)))
 
-(provide 'bold-avy)
-;;; bold-avy.el ends here
+(provide 'adapted-avy)
+;;; adapted-avy.el ends here

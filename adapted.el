@@ -1,14 +1,14 @@
-;;; bold.el --- A wrapper for various utilities for programming -*- lexical-binding: t -*-
+;;; adapted.el --- A wrapper for various utilities for programming -*- lexical-binding: t -*-
 
 (require 'cl-lib)
 (require 'dash)
 
-(defgroup bold nil
+(defgroup adapted nil
   "A wrapper for various utilities for programming.")
 
-(defvar bold-mode-map (make-sparse-keymap))
+(defvar adapted-mode-map (make-sparse-keymap))
 
-(defcustom bold-minor-mode-alist
+(defcustom adapted-minor-mode-alist
   '((tide-mode
      :package tide
      :major-modes (typescript-mode js-mode tsx-mode jsx-mode web-mode)
@@ -34,31 +34,31 @@
      ;; - tide-add-tslint-disable-next-line
      :priority 10))
   "Alist of minor modes supported by this backend."
-  :group 'bold)
+  :group 'adapted)
 
-(defcustom bold-documentation-at-point-fallback
+(defcustom adapted-documentation-at-point-fallback
   #'describe-symbol
-  "Fallback command/function from `bold-documentation-at-point'."
-  :group 'bold
+  "Fallback command/function from `adapted-documentation-at-point'."
+  :group 'adapted
   :type 'function)
 
 ;;;; Common utilities
-(defun bold--active-minor-modes ()
-  (->> bold-minor-mode-alist
+(defun adapted--active-minor-modes ()
+  (->> adapted-minor-mode-alist
        (--filter (and (boundp (car it)) (symbol-value (car it))))
        (-sort (-on #'> (lambda (it) (plist-get (cdr it) :priority))))))
 
-(defun bold--lookup-minor-property (property)
+(defun adapted--lookup-minor-property (property)
   (-some (lambda (cell) (plist-get (cdr cell) property))
-         (bold--active-minor-modes)))
+         (adapted--active-minor-modes)))
 
-(cl-defmacro bold--def-minor-command (command property doc
+(cl-defmacro adapted--def-minor-command (command property doc
                                               &rest fallback)
   (declare (indent 2))
   `(defun ,command ()
      ,doc
      (interactive)
-     (let ((command (bold--lookup-minor-property ,property)))
+     (let ((command (adapted--lookup-minor-property ,property)))
        (cond
         (command (call-interactively command))
         (,fallback (cond ((and (symbolp ,fallback)
@@ -79,7 +79,7 @@
 ;;;; Commands
 
 ;;;###autoload
-(defun bold-error-list ()
+(defun adapted-error-list ()
   "Display a list of errors in the current buffer."
   (interactive)
   (cond
@@ -93,69 +93,69 @@
    ((derived-mode-p 'org-mode)
     (org-lint))))
 
-(bold--def-minor-command bold-fix-at-point :fix-at-point
+(adapted--def-minor-command adapted-fix-at-point :fix-at-point
   "Apply fix for the error at point.")
 
-(bold--def-minor-command bold-format-region :format-region
+(adapted--def-minor-command adapted-format-region :format-region
   "Format the region.")
 
-(bold--def-minor-command bold-find-references-at-point :find-references-at-point
+(adapted--def-minor-command adapted-find-references-at-point :find-references-at-point
   "Find references to the symbol at point.")
 
-(bold--def-minor-command bold-documentation-at-point :documentation-at-point
+(adapted--def-minor-command adapted-documentation-at-point :documentation-at-point
   "Display documentation on the symbol at point."
-  'bold-documentation-at-point-fallback)
+  'adapted-documentation-at-point-fallback)
 
-(bold--def-minor-command bold-server-info :server-info
+(adapted--def-minor-command adapted-server-info :server-info
   "Display the server information.")
 
-(bold--def-minor-command bold-server-restart :server-restart
+(adapted--def-minor-command adapted-server-restart :server-restart
   "Restart the server.")
 
-(bold--def-minor-command bold-list-file-errors :list-file-errors
+(adapted--def-minor-command adapted-list-file-errors :list-file-errors
   "Display a list of all errors in the file.")
 
-(bold--def-minor-command bold-list-project-errors :list-project-errors
+(adapted--def-minor-command adapted-list-project-errors :list-project-errors
   "Display a list of all errors in the project.")
 
-(bold--def-minor-command bold-error-at-point :error-at-point
+(adapted--def-minor-command adapted-error-at-point :error-at-point
   "Display details on the error at point.")
 
-(bold--def-minor-command bold-rename-file :rename-file
+(adapted--def-minor-command adapted-rename-file :rename-file
   "Rename the current file.")
 
-(bold--def-minor-command bold-rename-symbol :rename-symbol
+(adapted--def-minor-command adapted-rename-symbol :rename-symbol
   "Rename the symbol at point.")
 
-(bold--def-minor-command bold-refactor :refactor
+(adapted--def-minor-command adapted-refactor :refactor
   "Refactor code at point or the region.")
 
-(bold--def-minor-command bold-organize-imports :organize-imports
+(adapted--def-minor-command adapted-organize-imports :organize-imports
   "Organize imports in the file.")
 
-(bold--def-minor-command bold-insert-block-comment :insert-block-comment
+(adapted--def-minor-command adapted-insert-block-comment :insert-block-comment
   "Insert a block comment for the current language.")
 
-(bold--def-minor-command bold-jump-to-definition :jump-to-definition
-  "Jump to the definition of the symbol at point."
-  #'xref-find-definitions)
+(adapted--def-minor-command adapted-jump-to-definition :jump-to-definition
+                     "Jump to the definition of the symbol at point."
+                     #'xref-find-definitions)
 
-(bold--def-minor-command bold-jump-back :jump-back
-  "Jump back to the previous location of `bold-jump-to-definition'."
-  #'xref-pop-marker-stack)
+(adapted--def-minor-command adapted-jump-back :jump-back
+                     "Jump back to the previous location of `adapted-jump-to-definition'."
+                     #'xref-pop-marker-stack)
 
 ;;;; Minor mode
-(define-minor-mode bold-mode
-  "Minor mode where commands in bold.el are enabled."
-  nil " Bold" 'bold-mode-map)
+(define-minor-mode adapted-mode
+  "Minor mode where commands in adapted.el are enabled."
+  nil " Adapted" 'adapted-mode-map)
 
 ;;;###autoload
-(defun bold-mode-conditionally ()
+(defun adapted-mode-conditionally ()
   (interactive)
   (let ((enabled (-any (lambda (mode)
                          (and (boundp mode) (symbol-value mode)))
-                       (-map #'car bold-minor-mode-alist))))
-    (bold-mode enabled)))
+                       (-map #'car adapted-minor-mode-alist))))
+    (adapted-mode enabled)))
 
-(provide 'bold)
-;;; bold.el ends here
+(provide 'adapted)
+;;; adapted.el ends here
